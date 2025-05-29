@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { PropertyResponse } from '../types';
 
 export class PropertyService {
@@ -18,12 +17,18 @@ export class PropertyService {
 
     try {
       console.log('Making autocomplete API request to:', autocompleteUrl);
-      const autocompleteRes = await axios.get(autocompleteUrl, {
+      const response = await fetch(autocompleteUrl, {
+        method: 'GET',
         headers: this.headers,
       });
-      console.log('Received autocomplete response');
 
-      const cleaned = autocompleteRes.data.replace(/^{}&&/, '');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      console.log('Received autocomplete response');
+      const data = await response.text();
+      const cleaned = data.replace(/^{}&&/, '');
       const parsed = JSON.parse(cleaned);
       const exactMatch = parsed?.payload?.exactMatch;
 
@@ -51,12 +56,21 @@ export class PropertyService {
 
     try {
       console.log('Making listing details API request to:', listingDetailsUrl);
-      const listingRes = await axios.get(listingDetailsUrl, {
+      const response = await fetch(listingDetailsUrl, {
+        method: 'GET',
         headers: this.headers,
       });
-      console.log('Received listing details response');
 
-      const homeData = listingRes?.data?.searchResult?.homes?.[0]?.homeData;
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      console.log('Received listing details response');
+      const data = await response.text();
+      const cleaned = data.replace(/^{}&&/, '');
+      const parsed = JSON.parse(cleaned);
+      const homeData = parsed?.searchResult?.homes?.[0]?.homeData;
+
       if (!homeData) {
         console.error('No home data found in listing response');
         throw new Error('No home data found from listing details');

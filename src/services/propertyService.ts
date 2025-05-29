@@ -87,7 +87,10 @@ export class PropertyService {
     }
   }
 
-  async getPropertyData(location: string): Promise<PropertyResponse> {
+  async getPropertyData(
+    location: string,
+    listingId: any
+  ): Promise<PropertyResponse> {
     console.log('Starting property data fetch for location:', location);
     try {
       const exactMatch = await this.getAutocompleteData(location);
@@ -95,7 +98,7 @@ export class PropertyService {
       const homeData = await this.getListingDetails(exactMatch.url);
 
       console.log('Successfully completed property data fetch');
-      return homeData as PropertyResponse;
+      return { ...homeData, listingId } as PropertyResponse;
     } catch (error) {
       console.error('Error in getPropertyData:', error);
       throw new Error('Failed to fetch property data');

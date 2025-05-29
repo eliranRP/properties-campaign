@@ -1,5 +1,6 @@
 export interface PropertyRequest {
   location: string;
+  listingId: string;
 }
 
 export interface PropertyResponse {

@@ -11,13 +11,19 @@ export class PropertyController {
 
   async getPropertyData(req: Request<{}, {}, PropertyRequest>, res: Response) {
     try {
-      const { location } = req.body;
+      const { location, listingId } = req.body;
 
       if (!location) {
         return res.status(400).json({ error: 'Location is required' });
       }
+      if (!listingId) {
+        return res.status(400).json({ error: 'Listing ID is required' });
+      }
 
-      const propertyData = await this.propertyService.getPropertyData(location);
+      const propertyData = await this.propertyService.getPropertyData(
+        location,
+        listingId
+      );
       res.json(propertyData);
     } catch (error) {
       console.error('Error in getPropertyData controller:', error);
